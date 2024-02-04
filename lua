@@ -27,10 +27,10 @@ local Options = Fluent.Options
     local Toggle = Tabs.General:AddToggle("Auto Farm", {Title = "Toggle", Default = false })
 
     Toggle:OnChanged(function()
-        print("Toggle changed:", Options.MyToggle.Value)
+        print("Toggle changed:", Options.Auto Farm.Value)
     end)
 
-    Options.MyToggle:SetValue(false)
+    Options.Auto Farm:SetValue(false)
 
 
 
