@@ -9,8 +9,14 @@ while _G.AutoFarm do
     for i, v in pairs(game:GetService("Workspace").Lives:GetDescendants()) do
       if v.Name:match("Bandit%d+") then
         local name, number = v.Name:match("Bandit%d+")
+        number = tonumber(number) -- แปลง string เป็น number
         if number > currentNumber then
           currentNumber = number
+
+          -- เปลี่ยนชื่อโดยลบตัวเลขท้าย
+          local cleanedName = string.gsub(v.Name, "%d+$", "")
+          v.Name = cleanedName
+
           repeat
             wait()
             game:GetService'VirtualUser':CaptureController()
@@ -22,3 +28,11 @@ while _G.AutoFarm do
     end
   end)
 end
+
+game:GetService("Workspace").Lives.ChildAdded:Connect(function(model)
+  wait()
+  if not game:GetService("Players"):GetPlayerFromCharacter(model) then -- if not player then
+    local cleanedName = string.gsub(model.Name, "%d+$", "")
+    model.Name = cleanedName
+  end
+end)
