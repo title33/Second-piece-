@@ -1,33 +1,25 @@
-_G.AutoFarm = true
+if not _G.XYLONOPOINTLOSING then
+  _G.XYLONOPOINTLOSING = true
+  local StatusIncreaseAmount = 0
+  local old = hookmetamethod(game, '__namecall', function(self, ...)
+    local args = {...}
+    local method = getnamecallmethod()
 
-while _G.AutoFarm do
-  wait()
-
-  pcall(function()
-    for i, v in pairs(game:GetService("Workspace").Lives:GetDescendants()) do
-      if v.Name:match("Bandit%d+") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
-        local name, number = v.Name:match("Bandit%d+")
-        number = tonumber(number)
-
-        
-        local cleanedName = string.gsub(v.Name, "%d+$", "")
-        v.Name = cleanedName
-
-        repeat
-          wait()
-          game:GetService'VirtualUser':CaptureController()
-          game:GetService'VirtualUser':Button1Down(Vector2.new(1280, 672))
-          game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
-        until not _G.AutoFarm or v.Humanoid.Health <= 0
+    if not checkcaller() and method == 'FireServer' and self.Name == "UpStats" and self.Parent == game:GetService("ReplicatedStorage").Remotes then
+      -- Check if the first argument is "Melee" (assuming that's the relevant condition)
+      if args[1] == "Melee" then
+        if args[2] >= 1 and args[2] <= 150 then
+          StatusIncreaseAmount = args[2]
+        elseif args[2] >= 1 and args[2] > 150 then
+          StatusIncreaseAmount = 150
+        end
+        args[2] = 0  -- Modify the second argument (points) instead of the first
+        for i = 1, StatusIncreaseAmount do
+          old(self, args[1], 0.5)  -- Pass "Melee" as the first argument
+        end
       end
     end
+
+    return old(self, unpack(args))
   end)
 end
-
-game:GetService("Workspace").Lives.ChildAdded:Connect(function(model)
-  wait()
-  if not game:GetService("Players"):GetPlayerFromCharacter(model) then -- if not player then
-    local cleanedName = string.gsub(model.Name, "%d+$", "")
-    model.Name = cleanedName
-  end
-end)
