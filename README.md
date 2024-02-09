@@ -4,6 +4,9 @@ local Remotes = ReplicatedStorage.Remotes
 -- Store the original FireServer function
 local originalFireServer = Remotes.UpStats.FireServer
 
+-- Variable to keep track of the current score
+local currentScore = 0
+
 -- Hook the FireServer function
 Remotes.UpStats.FireServer = newcclosure(function(self, ...)
     local arguments = {...}
@@ -11,7 +14,8 @@ Remotes.UpStats.FireServer = newcclosure(function(self, ...)
     -- Check if it's the correct RemoteEvent
     if arguments[1] == "Melee" and arguments[2] and type(arguments[2]) == "number" then
         -- Modify the arguments to prevent point loss
-        arguments[2] = 0
+        arguments[2] = math.max(0, arguments[2] - currentScore)
+        currentScore = arguments[2]
     end
 
     -- Call the original function with the modified arguments
@@ -20,7 +24,7 @@ end)
 
 -- Function to repeatedly fire the modified FireServer function
 local function repeatedlyFireServer()
-    while wait(1) do
+    while wait(0.1) do
         Remotes.UpStats.FireServer("Melee", 1)
     end
 end
