@@ -1,42 +1,29 @@
--- ส่วนสำหรับส่งข้อมูลอัพสถานะ
-local args = {
-    [1] = "Melee",
-    [2] = 1
-}
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = ReplicatedStorage.Remotes
 
-game:GetService("ReplicatedStorage").Remotes.UpStats:FireServer(unpack(args))
+-- Store the original FireServer function
+local originalFireServer = Remotes.UpStats.FireServer
 
--- ส่วนสำหรับทำให้ไม่เสียคะแนน
-if not _G.XYLONOPOINTLOSING then
-    _G.XYLONOPOINTLOSING = true
+-- Hook the FireServer function
+Remotes.UpStats.FireServer = newcclosure(function(self, ...)
+    local arguments = {...}
 
-    local StatusIncreaseAmount = 0
-    local RemoteEvent = game:GetService("ReplicatedStorage").Remotes.UpStats
-
-    local function FireServerWithoutLosingPoints(...)
-        local args = { ... }
-        
-        if args[1] >= 1 and args[1] <= 150 then
-            StatusIncreaseAmount = args[1]
-        elseif args[1] >= 1 and args[1] > 150 then
-            StatusIncreaseAmount = 150
-        end
-        
-        args[1] = 0
-        
-        for i = 1, StatusIncreaseAmount do
-            RemoteEvent:FireServer(unpack(args))
-            wait(0.5)
-        end
+    -- Check if it's the correct RemoteEvent
+    if arguments[1] == "Melee" and arguments[2] and type(arguments[2]) == "number" then
+        -- Modify the arguments to prevent point loss
+        arguments[2] = 0
     end
 
-    -- แทนที่ RemoteEvent:FireServer ด้วยฟังก์ชันที่ไม่เสียคะแนน
-    local oldFireServer = RemoteEvent.FireServer
-    RemoteEvent.FireServer = function(self, ...)
-        if self == RemoteEvent then
-            FireServerWithoutLosingPoints(...)
-        else
-            return oldFireServer(self, ...)
-        end
+    -- Call the original function with the modified arguments
+    return originalFireServer(self, unpack(arguments))
+end)
+
+-- Function to repeatedly fire the modified FireServer function
+local function repeatedlyFireServer()
+    while wait(1) do
+        Remotes.UpStats.FireServer("Melee", 1)
     end
 end
+
+-- Start the function in a new thread
+spawn(repeatedlyFireServer)
