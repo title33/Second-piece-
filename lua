@@ -31,8 +31,11 @@ spawn(function()
                     'Bandit Leader'
                 }
 
+                local teleportToSafeZone = true
+
                 for _, v in pairs(game:GetService('Workspace').Lives:GetDescendants()) do
                     if table.find(MonNames, v.Name) and v:FindFirstChild('HumanoidRootPart') and v.Humanoid.Health >= 1 then
+                        teleportToSafeZone = false
                         repeat
                             wait()
                             A()
@@ -42,12 +45,10 @@ spawn(function()
                                 v.HumanoidRootPart.CFrame * CFrame.new(0, 0, 7)
                         until _G.ea == false or v.Humanoid.Health <= 0
                     end
-                end
+                }
 
-                for _, Mons in pairs(MonNames) do
-                    if not MonsSpawned(Mons) then
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = SafeZone.CFrame
-                    end
+                if teleportToSafeZone then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = SafeZone.CFrame
                 end
             end
         end)
@@ -59,7 +60,7 @@ SafeZone.Size = Vector3.new(100, 3, 100)
 SafeZone.Position =
     Vector3.new(math.random(10000, 100000), math.random(10000, 50000), math.random(10000, 100000))
 SafeZone.Transparency = 0.35
-SafeZone.Material = 'SmoothPlastic'
+SafeZone.Material = Enum.Material.SmoothPlastic
 SafeZone.Anchored = true
 SafeZone.Parent = game:GetService('Workspace')
 SafeZone.Name = 'SafeZone'
