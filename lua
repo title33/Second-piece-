@@ -44,10 +44,11 @@ local Window = Fluent:CreateWindow({
 --Fluent provides Lucide Icons https://lucide.dev/icons/ for the tabs, icons are optional
 local Tabs = {
     General = Window:AddTab({ Title = "General", Icon = "home" }),
-    Stats = Window:AddTab({ Title = "Stats", Icon = "battery-charging" }),
+    Stats = Window:AddTab({ Title = "Stats", Icon = "bar-chart" }),
     Skil = Window:AddTab({ Title = "Skil", Icon = "battery-charging" }),
     Fruit = Window:AddTab({ Title = "Fruit", Icon = "apple" }),
     TP = Window:AddTab({ Title = "TP", Icon = "chevrons-right" }),
+    Shop = Window:AddTab({ Title = " Shop", Icon = "store" }),
     Inventory = Window:AddTab({ Title = "Inventory", Icon = "scroll" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
@@ -95,6 +96,7 @@ Boss = {
  "Bandit Leader"
 }
 
+local Farm = Tabs.General:AddSection("Farm")
 
 local Dropdown = Tabs.General:AddDropdown("Boss", {
     Title = "Boss",
@@ -203,7 +205,7 @@ Toggle:OnChanged(function(a)
     _G.eami = a
 end)
 
-
+local Weapon = Tabs.General:AddSection("Weapon")
 
 local Weaponlist = {}
 local Weapon = nil
@@ -247,6 +249,7 @@ game:GetService'VirtualUser':Button1Down(Vector2.new(1280, 672))
 end
     end)
 
+local Chests = Tabs.General:AddSection("Chests")
 
     local Toggle = Tabs.General:AddToggle("Auto Chests", {Title = "Auto Chests", Default = false })
     Toggle:OnChanged(function(wow)
@@ -261,7 +264,7 @@ fireproximityprompt(v,30)
     end)
 
 
-
+local Stats = Tabs.Stats:AddSection("Stats")
 
 local function SetupToggle(tabName, itemName, attribute)
     local Toggle = Tabs.Stats:AddToggle(tabName, {Title = itemName, Default = false })
@@ -297,6 +300,8 @@ local toggles = {
 for _, toggleInfo in ipairs(toggles) do
     SetupToggle(unpack(toggleInfo))
 end
+
+local Skil = Tabs.Skil:AddSection("Auto Skil")
 
     local Toggle = Tabs.Skil:AddToggle("Auto Skil Z", {Title = "Auto Skil Z", Default = false })
 
@@ -379,6 +384,7 @@ end)
 
     Options.MyToggle:SetValue(false)
 
+local Fruit = Tabs.Fruit:AddSection("Auto Random Fruit")
 
     local Toggle = Tabs.Fruit:AddToggle("Auto Random Fruit [Beli]", {Title = "Auto Random Fruit [Beli]", Default = false })
     Toggle:OnChanged(function(Random)
@@ -393,7 +399,7 @@ game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(790.2037
             end
         end)
 
-    local Toggle = Tabs.Fruit:AddToggle("Auto Random fruit Gem", {Title = "Auto Random fruit Gem", Default = false })
+    local Toggle = Tabs.Fruit:AddToggle("Auto Random fruit [Gem]", {Title = "Auto Random fruit [Gem]", Default = false })
     Toggle:OnChanged(function(Random)
         _G.Fruit2 = Random
         while _G.Fruit2 do wait()
@@ -411,6 +417,8 @@ players = {}
 for i, v in pairs(game:GetService("Players"):GetChildren()) do
     table.insert(players, v.Name)
 end
+
+local TP = Tabs.TP:AddSection("Teleport")
 
 local DropdownPlayer = Tabs.TP:AddDropdown("Player", {
     Title = "Player",
@@ -479,35 +487,6 @@ Tabs.TP:AddButton({
 })
 
 
-    shop = {}
-for i ,v in pairs(game:GetService("Workspace").Shop:GetChildren()) do
-table.insert(shop,v.Name)
-end
-
-Tabs.TP:AddDropdown("shop", {
-        Title = "shop",
-        Values = shop,
-        Multi = false,
-        Default = nil,
-        Callback = function(ma)
-        shop = ma
-       end
-   })
-
-
-
-        Tabs.TP:AddButton({
-        Title = "TP To Shop",
-        Description = "",
-        Callback = function()
-      		for i,v in pairs(game:GetService("Workspace").Shop[shop]:GetDescendants()) do
-if v.ClassName == "ProximityPrompt" then
-game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Parent.CFrame * CFrame.new(0,5,0)
-end
-      end
-        end
-    })
-    
 
 
 map = {}
@@ -534,7 +513,39 @@ game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.workspace.Loca
     })
 
 
-        Tabs.TP:AddButton({
+local Shop = Tabs.Shop:AddSection("Shop")
+
+    shop = {}
+for i ,v in pairs(game:GetService("Workspace").Shop:GetChildren()) do
+table.insert(shop,v.Name)
+end
+
+Tabs.Shop:AddDropdown("shop", {
+        Title = "shop",
+        Values = shop,
+        Multi = false,
+        Default = nil,
+        Callback = function(ma)
+        shop = ma
+       end
+   })
+
+
+
+        Tabs.Shop:AddButton({
+        Title = "TP To Shop",
+        Description = "",
+        Callback = function()
+      		for i,v in pairs(game:GetService("Workspace").Shop[shop]:GetDescendants()) do
+if v.ClassName == "ProximityPrompt" then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Parent.CFrame * CFrame.new(0,5,0)
+end
+      end
+        end
+    })
+    
+
+        Tabs.Shop:AddButton({
         Title = "Go to Traveling merchant",
         Description = "Go to Traveling merchant",
         Callback = function()
