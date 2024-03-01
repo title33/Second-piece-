@@ -48,7 +48,7 @@ local Tabs = {
     Skil = Window:AddTab({ Title = "Skil", Icon = "battery-charging" }),
     Fruit = Window:AddTab({ Title = "Fruit", Icon = "apple" }),
     TP = Window:AddTab({ Title = "TP", Icon = "chevrons-right" }),
-    Shop = Window:AddTab({ Title = " Shop", Icon = "store" }),
+    Shop = Window:AddTab({ Title = " Shop", Icon = "shopping-cart" }),
     Inventory = Window:AddTab({ Title = "Inventory", Icon = "scroll" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
