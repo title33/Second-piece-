@@ -262,45 +262,41 @@ fireproximityprompt(v,30)
 
 
 
-  local Slider = Tabs.Stats:AddSlider("Point", {
-    Title = "Point",
-    Description = "Point Up",
-    Default = 1,
-    Min = 0,
-    Max = 100,
-    Rounding = 1,
-    Callback = function(Value)
-        print("Slider was changed:", Value)
-    end
-})
 
-Slider:OnChanged(function(Value)
-    print("Slider changed:", Value)
-end)
+local function SetupToggle(tabName, itemName, attribute)
+    local Toggle = Tabs.Stats:AddToggle(tabName, {Title = itemName, Default = false })
 
-local Toggle = Tabs.Stats:AddToggle("Melee", {Title = "Melee", Default = false })
+    Toggle:OnChanged(function(a)
+        _G[attribute] = a
+    end)
+    Options.MyToggle:SetValue(false)
 
-Toggle:OnChanged(function(a)
-    _G.AutoMelee = a
-end)
-Options.MyToggle:SetValue(false)
+    spawn(function()
+        while wait(.1) do
+            pcall(function()
+                if _G[attribute] then
+                    local args = {
+                        [1] = itemName,
+                        [2] = 1
+                    }
 
-spawn(function()
-    while wait(.1) do
-        pcall(function()
-            if _G.AutoMelee then
-                local args = {
-                    [1] = "Melee",
-                    [2] = Slider:GetValue() 
-                }
+                    game:GetService("ReplicatedStorage").Remotes.UpStats:FireServer(unpack(args))
+                end
+            end)
+        end
+    end)
+end
 
-                game:GetService("ReplicatedStorage").Remotes.UpStats:FireServer(unpack(args))
-            end
-        end)
-    end
-end)
+local toggles = {
+    {"Melee", "Melee", "AutoMelee"},
+    {"Weapon", "Weapon", "AutoWeapon"},
+    {"Defense", "Defense", "AutoDefense"},
+    {"DemonFruit", "DemonFruit", "AutoDemonFruit"},
+}
 
-
+for _, toggleInfo in ipairs(toggles) do
+    SetupToggle(unpack(toggleInfo))
+end
 
     local Toggle = Tabs.Skil:AddToggle("Auto Skil Z", {Title = "Auto Skil Z", Default = false })
 
